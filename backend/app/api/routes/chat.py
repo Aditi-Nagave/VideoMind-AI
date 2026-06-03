@@ -1,11 +1,24 @@
-# app/api/routes/chat.py
-from fastapi import APIRouter, HTTPException
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Depends
+)
 
-from app.schemas.chat_schema import ChatRequest
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+
+from app.schemas.chat_schema import (
+    ChatRequest
+)
 
 from app.services.rag_service import (
     build_rag_chain,
     ask_question
+)
+
+from app.services.chat_db_service import (
+    create_chat
 )
 
 router = APIRouter(
@@ -16,7 +29,10 @@ router = APIRouter(
 
 @router.post("/chat")
 async def chat_with_video(
-    request: ChatRequest
+
+    request: ChatRequest,
+
+    db: Session = Depends(get_db)
 ):
 
     try:
@@ -30,9 +46,22 @@ async def chat_with_video(
             request.question
         )
 
+        # SAVE CHAT
+
+        create_chat(
+            db=db,
+            video_id=request.video_id,
+            question=request.question,
+            answer=answer
+        )
+
         return {
-            "question": request.question,
-            "answer": answer
+
+            "question":
+            request.question,
+
+            "answer":
+            answer
         }
 
     except Exception as e:
@@ -41,3 +70,4 @@ async def chat_with_video(
             status_code=500,
             detail=str(e)
         )
+

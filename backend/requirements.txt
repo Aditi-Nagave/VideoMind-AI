@@ -48,3 +48,8 @@ numpy>=1.26.0
 tqdm>=4.66.0                      # Progress bars
 requests>=2.32.0                  # HTTP requests
 
+
+sqlalchemy
+psycopg2-binary
+alembic
+

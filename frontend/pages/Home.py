@@ -21,6 +21,8 @@ upload_option = st.radio(
 
 transcript = ""
 
+# ---------------- FILE ---------------- #
+
 if upload_option == "Upload File":
 
     uploaded_file = st.file_uploader(
@@ -32,7 +34,9 @@ if upload_option == "Upload File":
 
         if st.button("Process File"):
 
-            with st.spinner("Processing File..."):
+            with st.spinner(
+                "Processing file..."
+            ):
 
                 response = upload_file(
                     uploaded_file,
@@ -44,9 +48,21 @@ if upload_option == "Upload File":
                     ""
                 )
 
-                st.session_state["transcript"] = transcript
+                # SAVE IN SESSION
 
-                st.success("Transcription Completed!")
+                st.session_state[
+                    "transcript"
+                ] = transcript
+
+                st.session_state[
+                    "video_id"
+                ] = response.get(
+                    "video_id"
+                )
+
+                st.success(
+                    "Transcription Completed!"
+                )
 
                 st.text_area(
                     "Transcript",
@@ -54,15 +70,21 @@ if upload_option == "Upload File":
                     height=300
                 )
 
+# ---------------- YOUTUBE ---------------- #
+
 else:
 
     youtube_url = st.text_input(
         "Enter YouTube URL"
     )
 
-    if st.button("Process YouTube Video"):
+    if st.button(
+        "Process YouTube Video"
+    ):
 
-        with st.spinner("Processing YouTube Video..."):
+        with st.spinner(
+            "Processing YouTube Video..."
+        ):
 
             response = upload_youtube(
                 youtube_url,
@@ -74,9 +96,21 @@ else:
                 ""
             )
 
-            st.session_state["transcript"] = transcript
+            # SAVE IN SESSION
 
-            st.success("YouTube Video Processed!")
+            st.session_state[
+                "transcript"
+            ] = transcript
+
+            st.session_state[
+                "video_id"
+            ] = response.get(
+                "video_id"
+            )
+
+            st.success(
+                "YouTube Processing Completed!"
+            )
 
             st.text_area(
                 "Transcript",
@@ -84,36 +118,66 @@ else:
                 height=300
             )
 
-if "transcript" in st.session_state:
+# ---------------- SUMMARY ---------------- #
 
-    transcript = st.session_state["transcript"]
+if (
+    "transcript" in st.session_state
+    and
+    "video_id" in st.session_state
+):
+
+    transcript = st.session_state[
+        "transcript"
+    ]
+
+    video_id = st.session_state[
+        "video_id"
+    ]
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        if st.button("Generate Summary"):
+        if st.button(
+            "Generate Summary"
+        ):
 
-            with st.spinner("Generating Summary..."):
+            with st.spinner(
+                "Generating Summary..."
+            ):
 
                 response = generate_summary(
+                    video_id,
                     transcript
                 )
 
-                st.subheader("Summary")
+                st.subheader(
+                    "Summary"
+                )
 
-                st.write(response["summary"])
+                st.write( 
+                    response.get("summary", "Summary generation failed")
+)
 
     with col2:
 
-        if st.button("Generate Title"):
+        if st.button(
+            "Generate Title"
+        ):
 
-            with st.spinner("Generating Title..."):
+            with st.spinner(
+                "Generating Title..."
+            ):
 
                 response = generate_title(
                     transcript
                 )
 
-                st.subheader("Generated Title")
+                st.subheader(
+                    "Generated Title"
+                )
 
-                st.write(response["title"])
+                st.write( 
+                    response.get("title", "Title generation failed")
+                )
+

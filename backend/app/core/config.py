@@ -13,5 +13,8 @@ class Settings:
 
     CHROMA_DIR = "vector_db"
     COLLECTION_NAME = "meeting_transcript"
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
+
 
 settings = Settings()

@@ -1,10 +1,24 @@
-# app/api/routes/summary.py
-from fastapi import APIRouter, HTTPException
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Depends
+)
 
-from app.schemas.summary_schema import SummaryRequest
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+
+from app.schemas.summary_schema import (
+    SummaryRequest
+)
+
 from app.services.summarization_service import (
     summarize,
     generate_title
+)
+
+from app.services.summary_db_service import (
+    create_summary
 )
 
 router = APIRouter(
@@ -15,13 +29,24 @@ router = APIRouter(
 
 @router.post("/summary")
 async def generate_summary(
-    request: SummaryRequest
+
+    request: SummaryRequest,
+
+    db: Session = Depends(get_db)
 ):
 
     try:
 
         summary = summarize(
             request.transcript
+        )
+
+        # SAVE SUMMARY
+
+        create_summary(
+            db=db,
+            video_id=request.video_id,
+            summary_text=summary
         )
 
         return {
@@ -57,3 +82,4 @@ async def create_title(
             status_code=500,
             detail=str(e)
         )
+

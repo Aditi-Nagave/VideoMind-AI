@@ -37,11 +37,17 @@ def upload_youtube(youtube_url, language="english"):
     return response.json()
 
 
-def generate_summary(transcript):
+# UPDATED
+
+def generate_summary(
+    video_id,
+    transcript
+):
 
     response = requests.post(
         f"{BASE_URL}/summary",
         json={
+            "video_id": video_id,
             "transcript": transcript
         }
     )
@@ -61,11 +67,18 @@ def generate_title(transcript):
     return response.json()
 
 
-def ask_chat(transcript, question):
+# UPDATED
+
+def ask_chat(
+    video_id,
+    transcript,
+    question
+):
 
     response = requests.post(
         f"{BASE_URL}/chat",
         json={
+            "video_id": video_id,
             "transcript": transcript,
             "question": question
         }
