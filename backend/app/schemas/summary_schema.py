@@ -1,3 +1,4 @@
+# backend/app/schemas/summary_schema.py
 from pydantic import BaseModel
 
 class SummaryRequest(BaseModel):

@@ -1,3 +1,4 @@
+# backend/app/services/llm_service.py
 from langchain_mistralai import ChatMistralAI
 from app.core.config import settings
 

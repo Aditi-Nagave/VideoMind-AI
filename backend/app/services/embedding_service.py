@@ -1,3 +1,4 @@
+# backend/app/services/embedding_service.py
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"

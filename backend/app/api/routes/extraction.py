@@ -1,3 +1,4 @@
+# backend/app/api/routes/extraction.py
 from fastapi import APIRouter, HTTPException
 
 from app.schemas.summary_schema import SummaryRequest

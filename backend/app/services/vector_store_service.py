@@ -1,3 +1,4 @@
+# backend/app/services/vector_store_service.py
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
