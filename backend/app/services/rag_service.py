@@ -18,19 +18,41 @@ def format_docs(docs):
     ])
 
 
-def build_rag_chain(transcript: str):
+def build_rag_chain(
+    transcript: str,
+    video_id: int
+):
 
-    vector_store = build_vector_store(transcript)
+    vector_store = build_vector_store(
+        transcript,
+        video_id
+    )
 
-    retriever = get_retriever(vector_store)
+    retriever = get_retriever(
+        vector_store
+    )
 
     llm = get_mistral_llm()
 
     prompt = ChatPromptTemplate.from_messages([
-        (
-            "system",
-            """
-Answer ONLY from transcript context.
+        ( "system",
+        """
+You are an expert meeting assistant.
+
+Answer ONLY using the transcript context provided.
+
+If the user asks:
+- What topics were discussed
+- What was discussed
+- Main agenda
+- Discussion points
+- Meeting overview
+
+then infer the topics from the transcript and provide a concise bullet list.
+
+If the answer truly cannot be found in the transcript, reply:
+
+"I could not find this information in the meeting transcript."
 
 Context:
 {context}
@@ -52,6 +74,9 @@ Context:
     return rag_chain
 
 
-def ask_question(rag_chain, question: str):
+def ask_question(
+    rag_chain,
+    question: str
+):
 
     return rag_chain.invoke(question)

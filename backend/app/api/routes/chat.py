@@ -39,7 +39,8 @@ async def chat_with_video(
     try:
 
         rag_chain = build_rag_chain(
-            request.transcript
+            request.transcript,
+            request.video_id
         )
 
         answer = ask_question(
@@ -71,4 +72,3 @@ async def chat_with_video(
             status_code=500,
             detail=str(e)
         )
-
