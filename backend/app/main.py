@@ -17,6 +17,7 @@ from app.api.routes.extraction import router as extraction_router
 from app.api.routes.auth import router as auth_router
 
 
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
