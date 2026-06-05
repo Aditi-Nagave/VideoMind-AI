@@ -13,6 +13,9 @@ from sqlalchemy.orm import Session
 import shutil
 import os
 
+from app.core.security import get_current_user
+from app.models.user_model import User
+
 from app.core.database import get_db
 
 from app.services.audio_service import process_input
@@ -49,6 +52,7 @@ async def upload_file(
 
     language: str = "english",
 
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
 
@@ -78,7 +82,8 @@ async def upload_file(
         video = create_video(
             db=db,
             title=file.filename,
-            file_path=file_path
+            file_path=file_path,
+            user_id=current_user.id
         )
 
         # SAVE TRANSCRIPT
@@ -116,6 +121,7 @@ async def upload_youtube(
 
     language: str = "english",
 
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
 
@@ -135,7 +141,8 @@ async def upload_youtube(
         video = create_video(
             db=db,
             title="YouTube Video",
-            youtube_url=youtube_url
+            youtube_url=youtube_url,
+            user_id=current_user.id
         )
 
         # SAVE TRANSCRIPT

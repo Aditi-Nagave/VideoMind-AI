@@ -1,4 +1,3 @@
-# frontend/pages/Home.py
 import streamlit as st
 
 from utils.api import (
@@ -7,6 +6,22 @@ from utils.api import (
     generate_summary,
     generate_title
 )
+
+# =========================
+# LOGIN REQUIRED
+# =========================
+
+if "token" not in st.session_state:
+
+    st.warning(
+        "Please login first."
+    )
+
+    st.stop()
+
+# =========================
+# PAGE TITLE
+# =========================
 
 st.title("📤 Upload & Summarize")
 
@@ -22,7 +37,9 @@ upload_option = st.radio(
 
 transcript = ""
 
-# ---------------- FILE ---------------- #
+# =========================
+# FILE UPLOAD
+# =========================
 
 if upload_option == "Upload File":
 
@@ -41,15 +58,27 @@ if upload_option == "Upload File":
 
                 response = upload_file(
                     uploaded_file,
+                    st.session_state["token"],
                     language
                 )
+
+                # ERROR HANDLING
+
+                if "video_id" not in response:
+
+                    st.error(
+                        response.get(
+                            "detail",
+                            "Upload failed"
+                        )
+                    )
+
+                    st.stop()
 
                 transcript = response.get(
                     "transcript",
                     ""
                 )
-
-                # SAVE IN SESSION
 
                 st.session_state[
                     "transcript"
@@ -57,9 +86,9 @@ if upload_option == "Upload File":
 
                 st.session_state[
                     "video_id"
-                ] = response.get(
+                ] = response[
                     "video_id"
-                )
+                ]
 
                 st.success(
                     "Transcription Completed!"
@@ -71,7 +100,9 @@ if upload_option == "Upload File":
                     height=300
                 )
 
-# ---------------- YOUTUBE ---------------- #
+# =========================
+# YOUTUBE
+# =========================
 
 else:
 
@@ -89,15 +120,27 @@ else:
 
             response = upload_youtube(
                 youtube_url,
+                st.session_state["token"],
                 language
             )
+
+            # ERROR HANDLING
+
+            if "video_id" not in response:
+
+                st.error(
+                    response.get(
+                        "detail",
+                        "Upload failed"
+                    )
+                )
+
+                st.stop()
 
             transcript = response.get(
                 "transcript",
                 ""
             )
-
-            # SAVE IN SESSION
 
             st.session_state[
                 "transcript"
@@ -105,9 +148,9 @@ else:
 
             st.session_state[
                 "video_id"
-            ] = response.get(
+            ] = response[
                 "video_id"
-            )
+            ]
 
             st.success(
                 "YouTube Processing Completed!"
@@ -119,7 +162,9 @@ else:
                 height=300
             )
 
-# ---------------- SUMMARY ---------------- #
+# =========================
+# SUMMARY & TITLE
+# =========================
 
 if (
     "transcript" in st.session_state
@@ -137,6 +182,10 @@ if (
 
     col1, col2 = st.columns(2)
 
+    # ---------------------
+    # SUMMARY
+    # ---------------------
+
     with col1:
 
         if st.button(
@@ -149,16 +198,24 @@ if (
 
                 response = generate_summary(
                     video_id,
-                    transcript
+                    transcript,
+                    st.session_state["token"]
                 )
 
                 st.subheader(
                     "Summary"
                 )
 
-                st.write( 
-                    response.get("summary", "Summary generation failed")
-)
+                st.write(
+                    response.get(
+                        "summary",
+                        "Summary generation failed"
+                    )
+                )
+
+    # ---------------------
+    # TITLE
+    # ---------------------
 
     with col2:
 
@@ -171,14 +228,29 @@ if (
             ):
 
                 response = generate_title(
-                    transcript
+                    video_id,
+                    transcript,
+                    st.session_state["token"]
                 )
 
                 st.subheader(
                     "Generated Title"
                 )
 
-                st.write( 
-                    response.get("title", "Title generation failed")
+                st.write(
+                    response.get(
+                        "title",
+                        "Title generation failed"
+                    )
                 )
 
+# =========================
+# CURRENT VIDEO INFO
+# =========================
+
+if "video_id" in st.session_state:
+
+    st.info(
+        f"Current Video ID: "
+        f"{st.session_state['video_id']}"
+    )

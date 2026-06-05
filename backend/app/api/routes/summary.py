@@ -7,6 +7,9 @@ from fastapi import (
 
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_user
+from app.models.user_model import User
+
 from app.core.database import get_db
 
 from app.schemas.summary_schema import (
@@ -33,6 +36,7 @@ async def generate_summary(
 
     request: SummaryRequest,
 
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
 
@@ -64,8 +68,9 @@ async def generate_summary(
 
 @router.post("/title")
 async def create_title(
-    request: SummaryRequest
-):
+    request: SummaryRequest,
+    current_user: User = Depends(get_current_user)
+    ):
 
     try:
 

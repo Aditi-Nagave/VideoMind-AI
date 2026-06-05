@@ -1,7 +1,18 @@
-# frontend/pages/Chat.py
 import streamlit as st
 
 from utils.api import ask_chat
+
+# =========================
+# LOGIN REQUIRED
+# =========================
+
+if "token" not in st.session_state:
+
+    st.warning(
+        "Please login first."
+    )
+
+    st.stop()
 
 st.title("💬 Chat With Video")
 
@@ -25,6 +36,10 @@ else:
         "video_id"
     ]
 
+    token = st.session_state[
+        "token"
+    ]
+
     question = st.text_input(
         "Ask Question"
     )
@@ -38,12 +53,17 @@ else:
             response = ask_chat(
                 video_id,
                 transcript,
-                question
+                question,
+                token
             )
 
-            st.subheader("Answer")
+            st.subheader(
+                "Answer"
+            )
 
             st.write(
-                response["answer"]
+                response.get(
+                    "answer",
+                    "Failed to generate answer"
+                )
             )
-
