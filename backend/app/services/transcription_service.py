@@ -1,5 +1,5 @@
 # backend/app/services/transcription_service.py
-import whisper
+from faster_whisper import WhisperModel
 import requests
 import os
 
@@ -20,23 +20,30 @@ def load_model():
 
     if _model is None:
 
-        _model = whisper.load_model(
-            settings.WHISPER_MODEL
+        _model = WhisperModel(
+            settings.WHISPER_MODEL,
+            device="cpu",
+            compute_type="int8"
         )
 
     return _model
 
 
-def transcribe_chunk_whisper(chunk_path: str):
+def transcribe_chunk_whisper(
+    chunk_path: str
+):
 
     model = load_model()
 
-    result = model.transcribe(
+    segments, _ = model.transcribe(
         chunk_path,
-        task="transcribe"
+        beam_size=1
     )
 
-    return result["text"]
+    return " ".join(
+        segment.text
+        for segment in segments
+    )
 
 
 def transcribe_chunk_sarvam(chunk_path: str):
