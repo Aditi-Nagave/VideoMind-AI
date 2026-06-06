@@ -21,3 +21,25 @@ def create_transcript(
 
     return transcript
 
+def get_transcript_by_video_id(
+    db,
+    video_id
+):
+    return (
+        db.query(Transcript)
+        .filter(
+            Transcript.video_id == video_id
+        )
+        .first()
+    )
+
+
+def delete_transcript(
+    db,
+    video_id
+):
+    db.query(Transcript).filter(
+        Transcript.video_id == video_id
+    ).delete()
+
+    db.commit()

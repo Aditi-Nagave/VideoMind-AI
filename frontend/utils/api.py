@@ -257,3 +257,66 @@ def get_video_history(token):
     )
 
     return response.json()
+
+
+def get_video_details(
+    video_id,
+    token
+):
+
+    response = requests.get(
+        f"{BASE_URL}/videos/{video_id}",
+        headers={
+            "Authorization":
+            f"Bearer {token}"
+        }
+    )
+
+    return response.json()
+
+
+def get_chat_history(
+    video_id,
+    token
+):
+
+    response = requests.get(
+        f"{BASE_URL}/videos/{video_id}/chats",
+        headers={
+            "Authorization":
+            f"Bearer {token}"
+        }
+    )
+
+    return response.json()
+
+
+def delete_video(
+    video_id,
+    token
+):
+
+    response = requests.delete(
+        f"{BASE_URL}/videos/{video_id}",
+        headers={
+            "Authorization":
+            f"Bearer {token}"
+        }
+    )
+
+    return response.json()
+
+
+def get_dashboard_stats(
+    token
+):
+
+    response = requests.get(
+        f"{BASE_URL}/dashboard",
+        headers={
+            "Authorization":
+            f"Bearer {token}"
+        }
+    )
+
+    return response.json()

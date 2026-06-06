@@ -23,3 +23,25 @@ def create_chat(
 
     return chat
 
+def get_chats_by_video_id(
+    db,
+    video_id
+):
+    return (
+        db.query(Chat)
+        .filter(
+            Chat.video_id == video_id
+        )
+        .all()
+    )
+
+
+def delete_chats(
+    db,
+    video_id
+):
+    db.query(Chat).filter(
+        Chat.video_id == video_id
+    ).delete()
+
+    db.commit()

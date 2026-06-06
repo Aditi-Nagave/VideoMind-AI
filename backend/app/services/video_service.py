@@ -25,3 +25,34 @@ def create_video(
 
     return video
 
+
+def get_video_by_id(
+    db,
+    video_id
+):
+    return (
+        db.query(Video)
+        .filter(
+            Video.id == video_id
+        )
+        .first()
+    )
+
+
+def delete_video(
+    db,
+    video_id
+):
+    video = (
+        db.query(Video)
+        .filter(
+            Video.id == video_id
+        )
+        .first()
+    )
+
+    if video:
+
+        db.delete(video)
+
+        db.commit()

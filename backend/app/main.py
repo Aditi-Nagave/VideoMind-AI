@@ -16,6 +16,9 @@ from app.api.routes.chat import router as chat_router
 from app.api.routes.extraction import router as extraction_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.video import router as video_router
+from app.api.routes.dashboard import (
+    router as dashboard_router
+)
 
 
 Base.metadata.create_all(bind=engine)
@@ -30,6 +33,9 @@ app.include_router(chat_router)
 app.include_router(extraction_router)
 app.include_router(auth_router)
 app.include_router(video_router)
+app.include_router(
+    dashboard_router
+)
 
 @app.get("/")
 def home():

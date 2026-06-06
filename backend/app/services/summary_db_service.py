@@ -21,3 +21,25 @@ def create_summary(
 
     return summary
 
+def get_summary_by_video_id(
+    db,
+    video_id
+):
+    return (
+        db.query(Summary)
+        .filter(
+            Summary.video_id == video_id
+        )
+        .first()
+    )
+
+
+def delete_summary(
+    db,
+    video_id
+):
+    db.query(Summary).filter(
+        Summary.video_id == video_id
+    ).delete()
+
+    db.commit()
