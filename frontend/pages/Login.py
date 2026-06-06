@@ -1,3 +1,4 @@
+# frontend/pages/Login.py
 import streamlit as st
 
 from utils.api import (
@@ -41,7 +42,9 @@ if st.button("Login"):
             "Login Successful"
         )
 
-        st.rerun()
+        st.switch_page(
+            "pages/Home.py"
+  )
 
     except Exception:
 

@@ -1,3 +1,4 @@
+# backend/app/services/auth_service.py
 from sqlalchemy.orm import Session
 
 from app.services.user_service import (

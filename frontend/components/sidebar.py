@@ -1,3 +1,4 @@
+# frontend/components/sidebar.py
 import streamlit as st
 
 
@@ -28,7 +29,9 @@ def render_sidebar():
 
                 st.session_state.clear()
 
-                st.rerun()
+                st.switch_page(
+                     "app.py"
+        )
 
             st.markdown("---")
 

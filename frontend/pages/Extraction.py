@@ -1,3 +1,4 @@
+# frontend/pages/Extraction.py
 import streamlit as st
 
 from utils.api import (
@@ -12,11 +13,9 @@ from utils.api import (
 
 if "token" not in st.session_state:
 
-    st.warning(
-        "Please login first."
-    )
-
-    st.stop()
+    st.switch_page(
+        "pages/Login.py"
+        )
 
 st.title("🧠 AI Extraction")
 

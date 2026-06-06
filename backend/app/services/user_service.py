@@ -1,3 +1,4 @@
+# backend/app/services/user_service.py
 from sqlalchemy.orm import Session
 
 from app.models.user_model import User

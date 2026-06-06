@@ -1,3 +1,4 @@
+# frontend/pages/Chat.py
 import streamlit as st
 
 from utils.api import ask_chat
@@ -8,11 +9,9 @@ from utils.api import ask_chat
 
 if "token" not in st.session_state:
 
-    st.warning(
-        "Please login first."
-    )
-
-    st.stop()
+    st.switch_page(
+        "pages/Login.py"
+        )
 
 st.title("💬 Chat With Video")
 
