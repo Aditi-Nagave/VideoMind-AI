@@ -20,6 +20,10 @@ class Settings:
     JWT_ALGORITHM = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
+    LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
+    LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
+    LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT")
+
 
 
 settings = Settings()

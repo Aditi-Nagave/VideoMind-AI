@@ -63,3 +63,5 @@ passlib==1.7.4
 
 plotly
 pandas
+
+langsmith
