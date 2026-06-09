@@ -1,3 +1,4 @@
+# backend/app/services/dashboard_service.py
 from app.models.video_model import Video
 from app.models.summary_model import Summary
 from app.models.chat_model import Chat

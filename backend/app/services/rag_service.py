@@ -7,6 +7,9 @@ from app.services.vector_store_service import (
     build_vector_store,
     get_retriever,
 )
+from app.services.chat_memory_service import (
+    format_chat_history
+)
 
 from app.services.llm_service import get_mistral_llm
 
@@ -20,7 +23,8 @@ def format_docs(docs):
 
 def build_rag_chain(
     transcript: str,
-    video_id: int
+    video_id: int,
+    history: str = ""
 ):
 
     vector_store = build_vector_store(
@@ -36,35 +40,52 @@ def build_rag_chain(
 
     prompt = ChatPromptTemplate.from_messages([
         ( "system",
-        """
+"""
 You are an expert meeting assistant.
 
-Answer ONLY using the transcript context provided.
+Use BOTH:
 
-If the user asks:
-- What topics were discussed
-- What was discussed
-- Main agenda
-- Discussion points
-- Meeting overview
+1. Chat History
+2. Transcript Context
 
-then infer the topics from the transcript and provide a concise bullet list.
+to answer.
 
-If the answer truly cannot be found in the transcript, reply:
+Chat History:
+{history}
 
-"I could not find this information in the meeting transcript."
-
-Context:
+Transcript Context:
 {context}
+
+Rules:
+
+- Understand follow-up questions.
+- Understand references such as:
+  "that topic"
+  "the second point"
+  "tell me more"
+
+- Use previous conversation.
+
+- If answer is not found:
+"I could not find this information in the meeting transcript."
 """
-        ),
-        ("human", "{question}")
-    ])
+),
+("human", "{question}")
+])
 
     rag_chain = (
         {
-            "context": retriever | RunnableLambda(format_docs),
-            "question": RunnablePassthrough()
+             "context":
+        retriever
+        | RunnableLambda(format_docs),
+
+    "history":
+        RunnableLambda(
+            lambda x: history
+        ),
+
+    "question":
+        RunnablePassthrough()
         }
         | prompt
         | llm

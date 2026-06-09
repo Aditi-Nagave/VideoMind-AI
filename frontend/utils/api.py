@@ -320,3 +320,19 @@ def get_dashboard_stats(
     )
 
     return response.json()
+
+
+def get_conversation_history(
+    video_id,
+    token
+):
+
+    response = requests.get(
+        f"{BASE_URL}/chat/history/{video_id}",
+        headers={
+            "Authorization":
+            f"Bearer {token}"
+        }
+    )
+
+    return response.json()

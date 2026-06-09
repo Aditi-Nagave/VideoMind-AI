@@ -1,7 +1,11 @@
 # frontend/pages/Chat.py
+
 import streamlit as st
 
-from utils.api import ask_chat
+from utils.api import (
+    ask_chat,
+    get_conversation_history
+)
 
 # =========================
 # LOGIN REQUIRED
@@ -11,9 +15,19 @@ if "token" not in st.session_state:
 
     st.switch_page(
         "pages/Login.py"
-        )
+    )
 
-st.title("💬 Chat With Video")
+# =========================
+# PAGE TITLE
+# =========================
+
+st.title(
+    "💬 Chat With Video"
+)
+
+# =========================
+# VIDEO REQUIRED
+# =========================
 
 if (
     "transcript" not in st.session_state
@@ -25,44 +39,152 @@ if (
         "Please upload/process a video first."
     )
 
-else:
+    st.stop()
 
-    transcript = st.session_state[
-        "transcript"
-    ]
+# =========================
+# SESSION VARIABLES
+# =========================
 
-    video_id = st.session_state[
-        "video_id"
-    ]
+transcript = st.session_state[
+    "transcript"
+]
 
-    token = st.session_state[
-        "token"
-    ]
+video_id = st.session_state[
+    "video_id"
+]
 
-    question = st.text_input(
-        "Ask Question"
+token = st.session_state[
+    "token"
+]
+
+# =========================
+# LOAD CHAT HISTORY
+# =========================
+
+if (
+    "loaded_video_id" not in st.session_state
+    or
+    st.session_state["loaded_video_id"]
+    != video_id
+):
+
+    history = get_conversation_history(
+        video_id,
+        token
     )
 
-    if st.button("Ask AI"):
+    messages = []
+
+    for chat in history:
+
+        messages.append(
+            {
+                "role": "user",
+                "content": chat["question"]
+            }
+        )
+
+        messages.append(
+            {
+                "role": "assistant",
+                "content": chat["answer"]
+            }
+        )
+
+    st.session_state[
+        "messages"
+    ] = messages
+
+    st.session_state[
+        "loaded_video_id"
+    ] = video_id
+
+# =========================
+# DISPLAY CHAT HISTORY
+# =========================
+
+for message in st.session_state[
+    "messages"
+]:
+
+    with st.chat_message(
+        message["role"]
+    ):
+
+        st.write(
+            message["content"]
+        )
+
+# =========================
+# CHAT INPUT
+# =========================
+
+prompt = st.chat_input(
+    "Ask about this video..."
+)
+
+# =========================
+# USER MESSAGE
+# =========================
+
+if prompt:
+
+    # Show user message
+
+    st.session_state[
+        "messages"
+    ].append(
+        {
+            "role": "user",
+            "content": prompt
+        }
+    )
+
+    with st.chat_message(
+        "user"
+    ):
+
+        st.write(
+            prompt
+        )
+
+    # =========================
+    # AI RESPONSE
+    # =========================
+
+    with st.chat_message(
+        "assistant"
+    ):
 
         with st.spinner(
-            "Generating Answer..."
+            "Thinking..."
         ):
 
             response = ask_chat(
                 video_id,
                 transcript,
-                question,
+                prompt,
                 token
             )
 
-            st.subheader(
-                "Answer"
+            answer = response.get(
+                "answer",
+                "Failed to generate answer."
             )
 
             st.write(
-                response.get(
-                    "answer",
-                    "Failed to generate answer"
-                )
+                answer
             )
+
+    # =========================
+    # SAVE TO SESSION MEMORY
+    # =========================
+
+    st.session_state[
+        "messages"
+    ].append(
+        {
+            "role": "assistant",
+            "content": answer
+        }
+    )
