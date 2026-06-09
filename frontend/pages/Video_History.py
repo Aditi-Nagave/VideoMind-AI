@@ -53,30 +53,40 @@ for video in videos:
                 st.session_state["token"]
             )
 
-            st.write(
-                data["summary"]
-            )
+            st.session_state["video_id"] = data["id"]
+
+            st.session_state["transcript"] = data["transcript"]
+
+            st.session_state["saved_summary"] = data["summary"]
+
+            st.switch_page(
+                 "pages/Summary.py"
+         )
 
     with col2:
 
         if st.button(
-            f"Chats {video['id']}"
-        ):
+              f"Chats {video['id']}"
+           ):
 
-            chats = get_chat_history(
+            data = get_video_details(
                 video["id"],
                 st.session_state["token"]
-            )
+        )
 
-            for chat in chats:
+            st.session_state["video_id"] = data["id"]
 
-                st.markdown(
-                    f"**Q:** {chat['question']}"
-                )
+            st.session_state["transcript"] = data["transcript"]
 
-                st.markdown(
-                    f"**A:** {chat['answer']}"
-                )
+            if "messages" in st.session_state:
+                del st.session_state["messages"]
+
+            if "loaded_video_id" in st.session_state:
+                del st.session_state["loaded_video_id"]
+
+            st.switch_page(
+                  "pages/Chat.py"
+               )
 
     with col3:
 
